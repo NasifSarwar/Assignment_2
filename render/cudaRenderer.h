@@ -3,43 +3,53 @@
 
 #include "circleRenderer.h"
 
-class CudaRenderer : public CircleRenderer {
- private:
-  Image* image;
-  SceneName sceneName;
+class CudaRenderer : public CircleRenderer
+{
+private:
+    Image *image;
+    SceneName sceneName;
 
-  int numCircles;
-  float* position;
-  float* velocity;
-  float* color;
-  float* radius;
+    int numCircles;
+    float *position;
+    float *velocity;
+    float *color;
+    float *radius;
 
-  float* cudaDevicePosition;
-  float* cudaDeviceVelocity;
-  float* cudaDeviceColor;
-  float* cudaDeviceRadius;
-  float* cudaDeviceImageData;
+    float *cudaDevicePosition;
+    float *cudaDeviceVelocity;
+    float *cudaDeviceColor;
+    float *cudaDeviceRadius;
+    float *cudaDeviceImageData;
 
- public:
-  CudaRenderer();
-  virtual ~CudaRenderer();
+    int tilesPerRow;
+    int tilesPerCol;
+    int numTiles;
+    int *cudaTileCircleCount;
+    int *cudaTileCircleIndices;
+    int *cudaTileCircleOffsets;
 
-  const Image* getImage();
+public:
+    CudaRenderer();
+    virtual ~CudaRenderer();
 
-  void setup();
+    const Image *getImage();
 
-  void loadScene(SceneName name, int seed = 0);
+    void setup();
 
-  void allocOutputImage(int width, int height);
+    void buildTileMapping();
 
-  void clearImage();
+    void loadScene(SceneName name, int seed = 0);
 
-  void advanceAnimation();
+    void allocOutputImage(int width, int height);
 
-  void render();
+    void clearImage();
 
-  void shadePixel(int circleIndex, float pixelCenterX, float pixelCenterY,
-                  float px, float py, float pz, float* pixelData);
+    void advanceAnimation();
+
+    void render();
+
+    void shadePixel(int circleIndex, float pixelCenterX, float pixelCenterY,
+                    float px, float py, float pz, float *pixelData);
 };
 
 #endif
