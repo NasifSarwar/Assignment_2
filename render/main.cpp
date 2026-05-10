@@ -5,7 +5,9 @@
 
 #include "refRenderer.h"
 #include "cudaRenderer.h"
+#ifndef NO_GL
 #include "platformgl.h"
+#endif
 
 #define DEFAULT_IMAGE_SIZE 1024
 
@@ -185,8 +187,13 @@ int main(int argc, char** argv)
         if (!interactiveMode)
             startBenchmark(renderer, benchmarkFrameStart, benchmarkFrameEnd - benchmarkFrameStart, frameFilename);
         else {
-            glutInit(&argc, argv);
-            startRendererWithDisplay(renderer);
+            #ifndef NO_GL
+                        glutInit(&argc, argv);
+                        startRendererWithDisplay(renderer);
+            #else
+                        printf("Interactive mode not included (built without GL)\n");
+                        startBenchmark(renderer, benchmarkFrameStart, benchmarkFrameEnd - benchmarkFrameStart, frameFilename);
+            #endif
         }
     }
 

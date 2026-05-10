@@ -27,23 +27,27 @@ HOSTNAME=$(shell hostname)
 LIBS       :=
 FRAMEWORKS :=
 
-NVCCFLAGS=-O3 -m64
-LIBS += GL glut cudart
+NVCCFLAGS=-O3 -m64 -arch=sm_70
+LIBS += cudart
+CXXFLAGS += -DNO_GL
+NVCCFLAGS += -DNO_GL
 
-ifneq ($(wildcard /opt/cuda-8.0/.*),)
-# Latedays
-LDFLAGS=-L/opt/cuda-8.0/lib64/ -lcudart
-else
-# GHC
-LDFLAGS=-L/usr/local/cuda/lib64/ -lcudart
-endif
+# ifneq ($(wildcard /opt/cuda-8.0/.*),)
+# # Latedays
+# LDFLAGS=-L/opt/cuda-8.0/lib64/ -lcudart
+# else
+# # GHC
+# LDFLAGS=-L/usr/local/cuda/lib64/ -lcudart
+# endif
+CUDA_PATH ?= $(shell dirname $(shell dirname $(shell which nvcc)))
+LDFLAGS=-L$(CUDA_PATH)/lib64/ -Wl,-rpath,$(CUDA_PATH)/lib64/ -lcudart
 
 LDLIBS  := $(addprefix -l, $(LIBS))
 LDFRAMEWORKS := $(addprefix -framework , $(FRAMEWORKS))
 
 NVCC=nvcc
 
-OBJS=$(OBJDIR)/main.o $(OBJDIR)/display.o $(OBJDIR)/benchmark.o $(OBJDIR)/refRenderer.o \
+OBJS=$(OBJDIR)/main.o $(OBJDIR)/benchmark.o $(OBJDIR)/refRenderer.o \
      $(OBJDIR)/cudaRenderer.o $(OBJDIR)/noise.o $(OBJDIR)/ppm.o $(OBJDIR)/sceneLoader.o
 
 
